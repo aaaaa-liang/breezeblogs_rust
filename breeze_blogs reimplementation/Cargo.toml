@@ -1,0 +1,11 @@
+[package]
+name = "breeze_blogs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rocket = { version = "0.5.1", features = ["json"] }
+mysql = "24.0.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bcrypt = "0.15.0"
