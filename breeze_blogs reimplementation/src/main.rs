@@ -11,6 +11,11 @@ fn rocket() -> _ {
     }
 
     rocket::build()
-    .mount("/", routes![routes::register, routes::login])
+    .mount("/", routes![
+        routes::register, 
+        routes::login, 
+        routes::add_interest, 
+        routes::get_interest
+        ])
 
 }

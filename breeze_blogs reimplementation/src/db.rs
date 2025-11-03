@@ -3,7 +3,8 @@ use mysql::prelude::*;
 
 pub fn establish_connection() -> Result<PooledConn> {
     // connection string (use your encoded password)
-    let url = "mysql://root:Hem%40ngi1234@localhost:3306/breeze_blogs";
+    // let url = "mysql://root:Hem%40ngi1234@localhost:3306/breeze_blogs";
+    let url = "mysql://root:annisnotanna66%21@localhost:3306/breeze_blogs";
 
     // create a connection pool
     let pool = Pool::new(url)?;
