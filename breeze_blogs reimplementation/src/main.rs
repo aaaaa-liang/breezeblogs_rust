@@ -14,8 +14,8 @@ fn rocket() -> _ {
     .mount("/", routes![
         routes::register, 
         routes::login, 
-        routes::add_interest, 
-        routes::get_interest
+        routes::set_interests, 
+        routes::get_interests
         ])
 
 }

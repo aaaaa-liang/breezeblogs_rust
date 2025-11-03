@@ -67,17 +67,17 @@ pub fn login(user: Json<LoginRequest>) -> String {
 #[derive(Deserialize)]
 pub struct InterestRequest {
     pub username: String,
-    pub interest: String,
+    pub interests: Vec<String>, // multiple interests at once
 }
 
 #[post("/interests", data = "<data>")]
-pub fn add_interest(data: Json<InterestRequest>) -> String {
+pub fn set_interests(data: Json<InterestRequest>) -> String {
     let mut conn = db::establish_connection().expect("DB connection failed");
 
-    // Lookup user_id by username
+    // Get user_id from username
     let user_id: Option<u32> = conn.exec_first(
         "SELECT id FROM users WHERE username = :username",
-        params! { "username" => &data.username }
+        params! { "username" => &data.username },
     ).unwrap();
 
     let user_id = match user_id {
@@ -85,39 +85,44 @@ pub fn add_interest(data: Json<InterestRequest>) -> String {
         None => return format!("❌ No user found with username '{}'", data.username),
     };
 
-    // Insert interest with user_id
-    let result = conn.exec_drop(
-        "INSERT INTO interests (user_id, interest) VALUES (:user_id, :interest)",
-        params! {
-            "user_id" => user_id,
-            "interest" => &data.interest,
-        },
+    // Delete existing interests
+    let _ = conn.exec_drop(
+        "DELETE FROM interests WHERE user_id = :user_id",
+        params! { "user_id" => user_id },
     );
 
-    match result {
-        Ok(_) => format!("✅ Interest '{}' added for {}", data.interest, data.username),
-        Err(e) => format!("❌ Failed to add interest: {}", e),
+    // Insert new interests
+    for interest in &data.interests {
+        let _ = conn.exec_drop(
+            "INSERT INTO interests (user_id, interest) VALUES (:user_id, :interest)",
+            params! { "user_id" => user_id, "interest" => interest },
+        );
     }
+
+    format!("✅ Interests set successfully for '{}'", data.username)
 }
 
 // ---------- GET INTERESTS ----------
-#[derive(Deserialize)]
-pub struct GetInterestRequest {
-    pub username: String,
-}
-
 #[get("/interests/<username>")]
-pub fn get_interest(username: String) -> Json<Vec<String>> {
+pub fn get_interests(username: String) -> Json<Vec<String>> {
     let mut conn = db::establish_connection().expect("DB connection failed");
 
-    // Join interests with users to fetch interests by username
-    let interests: Vec<String> = conn.exec_map(
-        "SELECT i.interest
-         FROM interests i
-         JOIN users u ON i.user_id = u.id
-         WHERE u.username = :username",
+    // Get user_id from username
+    let user_id: Option<u32> = conn.exec_first(
+        "SELECT id FROM users WHERE username = :username",
         params! { "username" => &username },
-        |interest: String| interest
+    ).unwrap();
+
+    let user_id = match user_id {
+        Some(id) => id,
+        None => return Json(vec![]), // user not found
+    };
+
+    // Fetch all interests
+    let interests: Vec<String> = conn.exec_map(
+        "SELECT interest FROM interests WHERE user_id = :user_id",
+        params! { "user_id" => user_id },
+        |interest| interest,
     ).unwrap_or_else(|_| vec![]);
 
     Json(interests)
