@@ -149,7 +149,7 @@ pub fn get_interests(cookies: &CookieJar<'_>) -> Json<Vec<String>> {
 // ---------- GET BLOG POSTS ----------
 #[get("/blog-posts")]
 pub fn get_blog_posts(cookies: &CookieJar<'_>) -> (rocket::http::Status, String) {
-    // Step 1: Check login
+    // Check login
     let user_cookie = cookies.get("user_email");
     if user_cookie.is_none() {
         return (rocket::http::Status::Unauthorized, "❌ Unauthorized: please log in first.".to_string());
@@ -158,7 +158,7 @@ pub fn get_blog_posts(cookies: &CookieJar<'_>) -> (rocket::http::Status, String)
 
     let mut conn = db::establish_connection().expect("DB connection failed");
 
-    // Step 2: Lookup user_id from email
+    // Lookup user_id from email
     let user_id: Option<u32> = conn.exec_first(
         "SELECT id FROM users WHERE email = ?",
         (user_email.clone(),),
@@ -169,7 +169,7 @@ pub fn get_blog_posts(cookies: &CookieJar<'_>) -> (rocket::http::Status, String)
         None => return (rocket::http::Status::NotFound, "❌ User not found.".to_string()),
     };
 
-    // Step 3: Fetch interests
+    // Fetch interests
     let interests: Vec<String> = conn.exec_map(
         "SELECT interest FROM interests WHERE user_id = ?",
         (user_id,),
@@ -180,7 +180,7 @@ pub fn get_blog_posts(cookies: &CookieJar<'_>) -> (rocket::http::Status, String)
         return (rocket::http::Status::NotFound, "❌ No interests found.".to_string());
     }
 
-    // Step 4: Fetch blog posts for each interest
+    // Fetch blog posts for each interest
     let mut return_str = String::new();
     for interest in &interests {
         let blog_posts: Vec<String> = conn.exec_map(
@@ -201,7 +201,6 @@ pub fn get_blog_posts(cookies: &CookieJar<'_>) -> (rocket::http::Status, String)
 
     (rocket::http::Status::Ok, return_str)
 }
-
 
 // ---------- POST EMAIL PREFERENCE ----------
 #[derive(Deserialize)]
