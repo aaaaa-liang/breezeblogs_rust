@@ -67,79 +67,74 @@ pub fn login(cookies: &CookieJar<'_>, user: Json<LoginRequest>) -> String {
 // ---------- POST INTERESTS ----------
 #[derive(Deserialize)]
 pub struct InterestRequest {
-    pub username: String,
-    pub interests: Vec<String>, // multiple interests at once
+    pub interests: Vec<String>,
 }
 
 #[post("/interests", data = "<data>")]
-pub fn set_interests(cookies: &rocket::http::CookieJar<'_>, data: Json<InterestRequest>) -> String {
-    // ✅ Step 1: check if user_email cookie exists
+pub fn set_interests(cookies: &CookieJar<'_>, data: Json<InterestRequest>) -> String {
+    // Check login
     let user_cookie = cookies.get("user_email");
-
     if user_cookie.is_none() {
         return "❌ Unauthorized: please log in first.".to_string();
     }
 
     let user_email = user_cookie.unwrap().value().to_string();
-    println!("🍪 Authenticated user: {}", user_email);
+    println!("🍪 Setting interests for logged-in user: {}", user_email);
 
     let mut conn = db::establish_connection().expect("DB connection failed");
 
-    // Get user_id from username
+    // Lookup user_id from email (NOT username anymore)
     let user_id: Option<u32> = conn.exec_first(
-        "SELECT id FROM users WHERE username = ?",
-        (&data.username,),
+        "SELECT id FROM users WHERE email = ?",
+        (user_email.clone(),),
     ).unwrap();
 
     let user_id = match user_id {
         Some(id) => id,
-        None => return format!("❌ No user found with username '{}'", data.username),
+        None => return "❌ User not found (database error).".to_string(),
     };
 
-    // Delete existing interests
-    let _ = conn.exec_drop(
-        "DELETE FROM interests WHERE user_id = ?",
-        (user_id,),
-    );
+    // Delete old interests
+    conn.exec_drop("DELETE FROM interests WHERE user_id = ?", (user_id,))
+        .unwrap();
 
     // Insert new interests
     for interest in &data.interests {
-        let _ = conn.exec_drop(
+        conn.exec_drop(
             "INSERT INTO interests (user_id, interest) VALUES (?, ?)",
             (user_id, interest),
-        );
+        ).unwrap();
     }
 
-    format!("✅ Interests set successfully for '{}'", data.username)
+    "✅ Interests updated successfully.".to_string()
 }
 
 // ---------- GET INTERESTS ----------
-#[get("/interests/<username>")]
-pub fn get_interests(cookies: &rocket::http::CookieJar<'_>, username: String) -> Json<Vec<String>> {
-    // ✅ Step 2: Check cookie before continuing
+#[get("/interests")]
+pub fn get_interests(cookies: &CookieJar<'_>) -> Json<Vec<String>> {
+    // Check login
     let user_cookie = cookies.get("user_email");
-
     if user_cookie.is_none() {
-        println!("❌ Unauthorized access attempt to get_interests");
-        return Json(vec![]); // empty list if not logged in
+        return Json(vec![]);
     }
 
     let user_email = user_cookie.unwrap().value().to_string();
-    println!("🍪 Authenticated user (viewing interests): {}", user_email);
+    println!("🍪 Fetching interests for user: {}", user_email);
+
     let mut conn = db::establish_connection().expect("DB connection failed");
 
-    // Get user_id from username
+    // Lookup user_id via email
     let user_id: Option<u32> = conn.exec_first(
-        "SELECT id FROM users WHERE username = ?",
-        (&username,),
+        "SELECT id FROM users WHERE email = ?",
+        (user_email.clone(),),
     ).unwrap();
 
     let user_id = match user_id {
         Some(id) => id,
-        None => return Json(vec![]), // user not found
+        None => return Json(vec![]),
     };
 
-    // Fetch all interests
+    // Fetch interests
     let interests: Vec<String> = conn.exec_map(
         "SELECT interest FROM interests WHERE user_id = ?",
         (user_id,),
@@ -149,6 +144,7 @@ pub fn get_interests(cookies: &rocket::http::CookieJar<'_>, username: String) ->
     Json(interests)
 }
 
+// ---------- LOGOUT ----------
 #[post("/logout")]
 pub fn logout(cookies: &rocket::http::CookieJar<'_>) -> String {
     // ✅ Step 3: remove the cookie if it exists
@@ -161,6 +157,7 @@ pub fn logout(cookies: &rocket::http::CookieJar<'_>) -> String {
     }
 }
 
+// ---------- SESSION ----------
 #[get("/session")]
 pub fn check_session(cookies: &rocket::http::CookieJar<'_>) -> String {
     match cookies.get("user_email") {
