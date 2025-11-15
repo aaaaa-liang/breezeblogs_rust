@@ -5,6 +5,8 @@ use bcrypt::{hash, verify, DEFAULT_COST};
 use crate::db;
 use rocket::http::Cookie;
 use rocket::http::CookieJar;
+use rocket::http::Status;
+
 
 // ---------- REGISTER ----------
 #[derive(Deserialize)]
@@ -142,6 +144,130 @@ pub fn get_interests(cookies: &CookieJar<'_>) -> Json<Vec<String>> {
     ).unwrap_or_else(|_| vec![]);
 
     Json(interests)
+}
+
+// ---------- GET BLOG POSTS ----------
+#[get("/blog-posts")]
+pub fn get_blog_posts(cookies: &CookieJar<'_>) -> (rocket::http::Status, String) {
+    // Step 1: Check login
+    let user_cookie = cookies.get("user_email");
+    if user_cookie.is_none() {
+        return (rocket::http::Status::Unauthorized, "❌ Unauthorized: please log in first.".to_string());
+    }
+    let user_email = user_cookie.unwrap().value().to_string();
+
+    let mut conn = db::establish_connection().expect("DB connection failed");
+
+    // Step 2: Lookup user_id from email
+    let user_id: Option<u32> = conn.exec_first(
+        "SELECT id FROM users WHERE email = ?",
+        (user_email.clone(),),
+    ).unwrap();
+
+    let user_id = match user_id {
+        Some(id) => id,
+        None => return (rocket::http::Status::NotFound, "❌ User not found.".to_string()),
+    };
+
+    // Step 3: Fetch interests
+    let interests: Vec<String> = conn.exec_map(
+        "SELECT interest FROM interests WHERE user_id = ?",
+        (user_id,),
+        |interest| interest,
+    ).unwrap_or_else(|_| vec![]);
+
+    if interests.is_empty() {
+        return (rocket::http::Status::NotFound, "❌ No interests found.".to_string());
+    }
+
+    // Step 4: Fetch blog posts for each interest
+    let mut return_str = String::new();
+    for interest in &interests {
+        let blog_posts: Vec<String> = conn.exec_map(
+            "SELECT content FROM blogposts WHERE interest = ?",
+            (interest,),
+            |content| content,
+        ).unwrap_or_else(|_| vec![]);
+
+        for post in blog_posts {
+            return_str.push_str(&post);
+            return_str.push('\n'); // Separate posts with newline
+        }
+    }
+
+    if return_str.is_empty() {
+        return (rocket::http::Status::NotFound, "❌ No blog posts found for your interests.".to_string());
+    }
+
+    (rocket::http::Status::Ok, return_str)
+}
+
+
+// ---------- POST EMAIL PREFERENCE ----------
+#[derive(Deserialize)]
+pub struct EmailRequest {
+    pub email: String,
+}
+
+#[post("/email", data = "<data>")]
+pub fn set_email(cookies: &CookieJar<'_>, data: Json<EmailRequest>) -> String {
+    // Check login
+    let user_cookie = cookies.get("user_email");
+    if user_cookie.is_none() {
+        return "❌ Unauthorized: please log in first.".to_string();
+    }
+    let user_email = user_cookie.unwrap().value().to_string();
+
+    let mut conn = db::establish_connection().expect("DB connection failed");
+
+    // Lookup user_id
+    let user_id: Option<u32> = conn.exec_first(
+        "SELECT id FROM users WHERE email = ?",
+        (user_email,),
+    ).unwrap();
+
+    let user_id = match user_id {
+        Some(id) => id,
+        None => return "❌ User not found.".to_string(),
+    };
+
+    // Delete existing preference
+    conn.exec_drop("DELETE FROM emails WHERE user_id = ?", (user_id,))
+        .unwrap();
+
+    // Insert new preference
+    match conn.exec_drop(
+        "INSERT INTO emails (user_id, email) VALUES (?, ?)",
+        (user_id, &data.email),
+    ) {
+        Ok(_) => "✅ Email set successfully.".to_string(),
+        Err(e) => format!("❌ Failed to set email: {}", e),
+    }
+}
+
+// ---------- SEND NEW MAILS ----------
+#[get("/send-news-mails")]
+pub fn send_news_mails() -> (Status, String) {
+    let mut conn = db::establish_connection().expect("DB connection failed");
+
+    // Fetch all emails
+    let emails: Vec<String> = conn.exec_map(
+        "SELECT email FROM emails",
+        (),
+        |email| email,
+    ).unwrap_or_else(|_| vec![]);
+
+    if emails.is_empty() {
+        return (Status::NotFound, "❌ No emails found.".to_string());
+    }
+
+    // Build return string, just like Python
+    let mut return_str = String::new();
+    for email in emails {
+        return_str.push_str(&format!("{};{};", email, email));
+    }
+
+    (Status::Ok, return_str)
 }
 
 // ---------- LOGOUT ----------
