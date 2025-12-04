@@ -1,0 +1,10 @@
+/Users/annliang/Documents/breezeblogs_rust/breeze_blogs reimplementation_sesame/target/debug/deps/libmemoffset-e9549939c29f5a93.rmeta: /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/lib.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/raw_field.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/offset_of.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/span_of.rs
+
+/Users/annliang/Documents/breezeblogs_rust/breeze_blogs reimplementation_sesame/target/debug/deps/libmemoffset-e9549939c29f5a93.rlib: /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/lib.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/raw_field.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/offset_of.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/span_of.rs
+
+/Users/annliang/Documents/breezeblogs_rust/breeze_blogs reimplementation_sesame/target/debug/deps/memoffset-e9549939c29f5a93.d: /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/lib.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/raw_field.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/offset_of.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/span_of.rs
+
+/Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/lib.rs:
+/Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/raw_field.rs:
+/Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/offset_of.rs:
+/Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/memoffset-0.6.5/src/span_of.rs:

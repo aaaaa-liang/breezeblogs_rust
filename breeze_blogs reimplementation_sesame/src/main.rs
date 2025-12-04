@@ -1,22 +1,23 @@
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
-mod db;
-mod routes;   // 👈 this line is critical
+mod policy;
+mod routes;
 
-use rocket::http::Status;
-use sesame_rock::prelude::*;
-use sesame_rock::policy::NoPolicy;
+use sesame_rocket::rocket::{SesameRocket, routes};
 
-#[launch]
-fn rocket() -> _ {
-    match db::establish_connection() {
-        Ok(_) => println!("🚀 Database connection test passed!"),
-        Err(e) => eprintln!("❌ Database connection failed: {:?}", e),
+#[rocket::main]
+async fn main() {
+    if let Err(e) = SesameRocket::build()
+        .mount(
+            "/",
+            routes![
+                routes::register,
+            ],
+        )
+        .launch()
+        .await
+    {
+        eprintln!("❌ Rocket failed to launch: {:?}", e);
     }
-    rocket::build()
-        .attach(PConFairing)     // required for Sesame
-        .manage(YouContext::new())
-        .mount("/", routes![
-            routes::register
-        ])
 }

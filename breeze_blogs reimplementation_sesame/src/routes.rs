@@ -1,91 +1,62 @@
-use rocket::serde::{Deserialize, json::Json}; // 
-use rocket::State;
-use sesame_core::pcon::PCon; // sesame core 
-use sesame_core::policy::NoPolicy; // sesame core 
-use sesame_rocket::rocket::{post, PConResponseEnum}; // sesame rocket 
-use sesame_rocket::PrivacyContext; // sesame rocket 
+use rocket::serde::Deserialize;
+use bcrypt::{hash, DEFAULT_COST};
 
+use sesame::verified::{VerifiedRegion};
+use sesame::{pcon::PCon, policy::NoPolicy};
+use sesame_mysql::PConParam; // get? 
+use sesame_rocket::rocket::{post, PConCookieJar, RequestPConJson, PConJson, PConCookie, ContextResponse};
+use crate::policy::{BreezeGuard, BreezeContextData};
 
-use mysql::*; // 
-use mysql::prelude::*; // 
-use bcrypt::{hash, verify, DEFAULT_COST}; // 
-use crate::db;
-use crate::policy::YouContext;
-use rocket::http::Cookie;
-use rocket::http::CookieJar;
-use rocket::http::Status;
-
-
-// ---------- REGISTER ----------
-#[derive(Deserialize)]
+#[derive(RequestPConJson)]
 pub struct RegisterRequest {
-    pub username: String,
-    pub email: String,
-    pub password: String,
+    pub username: PCon<String, NoPolicy>,
+    pub email: PCon<String, NoPolicy>,
+    pub password: PCon<String, NoPolicy>,
 }
-
-// #[post("/register", data = "<user>")]
-// pub fn register(user: Json<RegisterRequest>) -> String {
-//     let mut conn = db::establish_connection().expect("DB connection failed");
-
-//     let hashed_password = hash(&user.password, DEFAULT_COST).unwrap();
-
-//     let result = conn.exec_drop(
-//         "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-//         (&user.username, &user.email, &hashed_password),
-//     );
-
-//     match result {
-//         Ok(_) => format!("✅ User '{}' registered successfully!", user.username),
-//         Err(e) => format!("❌ Failed to register user: {}", e),
-//     }
-// }
-
-
-// #[post("/register", data = "<data>")]
-// pub fn register(
-//     data: PCon<Json<RegisterRequest>, NoPolicy>,
-//     context: YouContext
-// ) -> PConResponseEnum {
-
-//     let user = data.into_inner();     // extract JSON
-//     let mut conn = db::establish_connection().unwrap();
-
-//     let hashed = hash(&user.password, DEFAULT_COST).unwrap();
-
-//     let result = conn.exec_drop(
-//         "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-//         (&user.username, &user.email, &hashed),
-//     );
-
-//     match result {
-//         Ok(_) => format!("✅ User '{}' registered successfully!", user.username).into(),
-//         Err(e) => format!("❌ Failed to register user: {}", e).into(),
-//     }
-// }
 
 #[post("/register", data = "<user>")]
 pub fn register(
-    user: PCon<Json<RegisterRequest>, NoPolicy>,   // Sesame-wrapped request body
-    context: Context,                               // Sesame privacy context
-) -> PCon<String, NoPolicy> {                       // Sesame-wrapped return value
-    // Extract the inner JSON from PCon
-    let user = user.into_inner();
+    cookies: PConCookieJar<'_, '_>,
+    context: BreezeGuard,
+    user: PConJson<RegisterRequest>
+) -> ContextResponse<String, NoPolicy, BreezeContextData> {
+    let binding = context.data().unwrap().db.clone();
+    let mut db = binding.lock().unwrap();
 
-    let hashed_password = hash(&user.password, DEFAULT_COST).unwrap();
 
-    let mut conn = db::establish_connection().expect("DB connection failed");
+    // TO DO: we need to change this into VerifiedRegion and change to PConString for hashpassword 
 
-    let result = conn.exec_drop(
+    let hashed_password = user.password.clone(); //hash(&user.password, DEFAULT_COST).unwrap();
+    let email_pcon = user.email.clone();
+
+    // exec_drop takes (query, params)
+    let result = db.exec_drop(
         "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-        (&user.username, &user.email, &hashed_password),
+        (user.username.clone(), email_pcon, hashed_password),
+        context.clone(),
     );
 
-    let response = match result {
-        Ok(_) => format!("✅ User '{}' registered successfully!", user.username),
-        Err(e) => format!("❌ Failed to register user: {}", e),
-    };
+    match result {
+        Ok(_) => {
+            cookies.add(
+                PConCookie::build("user_email", user.email.clone())
+                    .path("/")
+                    .finish(),
+                context.clone(),
+            );
 
-    // Wrap output in PCon (required by Sesame)
-    PCon::new(response, context)
+            let output: PCon<String, NoPolicy> = user.username.clone().into_verified(VerifiedRegion::new(|username: String| {
+                format!("✅ User '{}' registered successfully!", username)
+            }));
+
+            //format!("✅ User '{}' registered successfully!", user.username)
+            ContextResponse(output, context)
+        }
+        Err(e) => {
+            ContextResponse(
+                PCon::new(format!("❌ Failed to register user: {}", e), NoPolicy {}),
+                context
+            )
+        }
+    }
 }

@@ -1,22 +1,27 @@
-use mysql::*;
-use mysql::prelude::*;
+use sesame_mysql::{PConOpts, SesameConn};
+use std::result::Result;
 
-pub fn establish_connection() -> Result<PooledConn> {
-    // connection string components
-    let opts = OptsBuilder::new()
-        .ip_or_hostname(Some("localhost"))
-        .tcp_port(3306)
-        .user(Some("root"))
-        .pass(Some("annisnotanna66!"))
-        .db_name(Some("breeze_blogs"));
+pub struct MySqlBackend {
+    pub handle: SesameConn,
+    _db_user: String,
+    _db_password: String,
+    _db_name: String,
+}
 
-    // create a connection pool
-    let pool = Pool::new(opts)?;
+impl MySqlBackend {
+    pub fn new(user: &str, password: &str, dbname: &str) -> Result<Self, String> {
+        let mut db = SesameConn::new(
+            PConOpts::from_url(&format!("mysql://{}:{}@127.0.0.1/", user, password)).unwrap(),
+        ).unwrap();
 
-    // get a single connection from the pool
-    let conn = pool.get_conn()?;
+        assert_eq!(db.ping(), true);
+        db.query_drop(format!("USE {};", dbname)).unwrap();
 
-    println!("✅ Successfully connected to the MySQL database!");
-
-    Ok(conn)
+        Ok(MySqlBackend {
+            handle: db,
+            _db_user: user.to_string(),
+            _db_password: password.to_string(),
+            _db_name: dbname.to_string(),
+        })
+    }
 }

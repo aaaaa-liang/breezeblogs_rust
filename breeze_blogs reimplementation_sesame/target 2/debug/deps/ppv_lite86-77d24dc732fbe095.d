@@ -1,0 +1,10 @@
+/Users/annliang/Documents/breezeblogs_rust/breeze_blogs reimplementation_sesame/target/debug/deps/libppv_lite86-77d24dc732fbe095.rmeta: /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/lib.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/soft.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/types.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/generic.rs
+
+/Users/annliang/Documents/breezeblogs_rust/breeze_blogs reimplementation_sesame/target/debug/deps/libppv_lite86-77d24dc732fbe095.rlib: /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/lib.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/soft.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/types.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/generic.rs
+
+/Users/annliang/Documents/breezeblogs_rust/breeze_blogs reimplementation_sesame/target/debug/deps/ppv_lite86-77d24dc732fbe095.d: /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/lib.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/soft.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/types.rs /Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/generic.rs
+
+/Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/lib.rs:
+/Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/soft.rs:
+/Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/types.rs:
+/Users/annliang/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ppv-lite86-0.2.21/src/generic.rs:
