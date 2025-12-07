@@ -13,6 +13,14 @@ async fn main() {
             "/",
             routes![
                 routes::register,
+                routes::login,
+                routes::set_interests,
+                routes::get_interests,
+                routes::get_blog_posts,
+                routes::set_email,
+                routes::send_news_mails,
+                routes::logout,
+                routes::check_session
             ],
         )
         .launch()
