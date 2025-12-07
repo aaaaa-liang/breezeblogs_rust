@@ -26,7 +26,7 @@ pub fn register(
     context: BreezeGuard,
     user: PConJson<RegisterRequest>
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
-    let mut db = SesameConn::new(PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),).unwrap();
+    let mut db = SesameConn::new(PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),).unwrap();
         db.query_drop("USE breeze_blogs").unwrap();
 
     let hashed_password: PCon<String, NoPolicy> = user.password.clone().into_verified(VerifiedRegion::new(|password: String| {
@@ -78,7 +78,7 @@ pub fn login(
     context: BreezeGuard,
     user: PConJson<LoginRequest>
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
-    let mut db = SesameConn::new(PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),).unwrap();
+    let mut db = SesameConn::new(PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),).unwrap();
         db.query_drop("USE breeze_blogs").unwrap();
 
     // Query database for user by email

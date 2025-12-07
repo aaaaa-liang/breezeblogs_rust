@@ -28,7 +28,7 @@ pub fn register(
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
     // Create DB connection
 let mut db = SesameConn::new(
-    PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+    PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
 ).unwrap();
 db.query_drop("USE breeze_blogs").unwrap();
 
@@ -87,7 +87,7 @@ pub fn login(
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
     // Create DB connection
 let mut db = SesameConn::new(
-    PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+    PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
 ).unwrap();
 db.query_drop("USE breeze_blogs").unwrap();
 
@@ -195,7 +195,7 @@ pub fn set_interests(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -334,7 +334,7 @@ pub fn get_interests(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -454,7 +454,7 @@ pub fn get_blog_posts(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -628,7 +628,7 @@ pub fn set_email(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -735,7 +735,7 @@ pub fn send_news_mails(
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
