@@ -7,7 +7,7 @@ pub fn establish_connection() -> Result<PooledConn> {
         .ip_or_hostname(Some("localhost"))
         .tcp_port(3306)
         .user(Some("root"))
-        .pass(Some("password")) // your password
+        .pass(Some("YOURDBPASSWORD")) 
         .db_name(Some("breeze_blogs"));
 
     // create a connection pool

@@ -7,9 +7,6 @@ use sesame::{pcon::PCon, policy::NoPolicy};
 use sesame_mysql::{PConParam, SesameConn, PConOpts};
 use sesame_rocket::rocket::{post, get, PConCookieJar, RequestPConJson, PConJson, PConCookie, ContextResponse};
 use crate::policy::{BreezeGuard, BreezeContextData};
-// use sesame_mysql::SesameConn;
-// use sesame_mysql::PConOpts;
-
 
 // ----------------REGISTER----------------
 #[derive(RequestPConJson)]
@@ -28,7 +25,7 @@ pub fn register(
 
     // Create DB connection
 let mut db = SesameConn::new(
-    PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+    PConOpts::from_url("mysql://root:YOURDBPASSWORD@127.0.0.1/").unwrap(),
 ).unwrap();
 db.query_drop("USE breeze_blogs").unwrap();
 
@@ -55,14 +52,14 @@ db.query_drop("USE breeze_blogs").unwrap();
             );
 
             let output: PCon<String, NoPolicy> = user.username.clone().into_verified(VerifiedRegion::new(|username: String| {
-                format!("✅ User '{}' registered successfully!", username)
+                format!("User '{}' registered successfully!", username)
             }));
 
             ContextResponse(output, context)
         }
         Err(e) => {
             ContextResponse(
-                PCon::new(format!("❌ Failed to register user: {}", e), NoPolicy {}),
+                PCon::new(format!("Failed to register user: {}", e), NoPolicy {}),
                 context
             )
         }
@@ -85,7 +82,7 @@ pub fn login(
     
     // Create DB connection
 let mut db = SesameConn::new(
-    PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+    PConOpts::from_url("mysql://root:YOURDBPASSWORD@127.0.0.1/").unwrap(),
 ).unwrap();
 db.query_drop("USE breeze_blogs").unwrap();
 
@@ -98,7 +95,7 @@ db.query_drop("USE breeze_blogs").unwrap();
         Ok(result) => result,
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -109,13 +106,13 @@ db.query_drop("USE breeze_blogs").unwrap();
         Some(Ok(row)) => row,
         None => {
             return ContextResponse(
-                PCon::new("❌ No account found with that email.".to_string(), NoPolicy {}),
+                PCon::new("No account found with that email.".to_string(), NoPolicy {}),
                 context
             );
         }
         Some(Err(e)) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -142,7 +139,7 @@ db.query_drop("USE breeze_blogs").unwrap();
     // Create success/failure message
     let response = user.email.clone().into_verified(
         VerifiedRegion::new(|email: String| {
-            format!("✅ Login successful for '{}'", email)
+            format!("Login successful for '{}'", email)
         })
     );
 
@@ -166,7 +163,7 @@ pub fn set_interests(
     
     if user_cookie.is_none() {
         return ContextResponse(
-            PCon::new("❌ Unauthorized: please log in first.".to_string(), NoPolicy {}),
+            PCon::new("Unauthorized: please log in first.".to_string(), NoPolicy {}),
             context
         );
     }
@@ -193,7 +190,7 @@ pub fn set_interests(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURDBPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -206,7 +203,7 @@ pub fn set_interests(
         Ok(result) => result,
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -217,13 +214,13 @@ pub fn set_interests(
         Some(Ok(row)) => row,
         None => {
             return ContextResponse(
-                PCon::new("❌ User not found (database error).".to_string(), NoPolicy {}),
+                PCon::new("User not found (database error).".to_string(), NoPolicy {}),
                 context
             );
         }
         Some(Err(e)) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -244,7 +241,7 @@ pub fn set_interests(
         Ok(_) => {},
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Failed to delete old interests: {}", e), NoPolicy {}),
+                PCon::new(format!("Failed to delete old interests: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -261,7 +258,7 @@ pub fn set_interests(
             Ok(result) => result,
             Err(e) => {
                 return ContextResponse(
-                    PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                    PCon::new(format!("Database error: {}", e), NoPolicy {}),
                     context
                 );
             }
@@ -281,7 +278,7 @@ pub fn set_interests(
             Ok(_) => {},
             Err(e) => {
                 return ContextResponse(
-                    PCon::new(format!("❌ Failed to insert interest: {}", e), NoPolicy {}),
+                    PCon::new(format!("Failed to insert interest: {}", e), NoPolicy {}),
                     context
                 );
             }
@@ -289,7 +286,7 @@ pub fn set_interests(
     }
 
     ContextResponse(
-        PCon::new("✅ Interests updated successfully.".to_string(), NoPolicy {}),
+        PCon::new("Interests updated successfully.".to_string(), NoPolicy {}),
         context
     )
 }
@@ -332,7 +329,7 @@ pub fn get_interests(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURDBPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -432,7 +429,7 @@ pub fn get_blog_posts(
     
     if user_cookie.is_none() {
         return ContextResponse(
-            PCon::new("❌ Unauthorized: please log in first.".to_string(), NoPolicy {}),
+            PCon::new("Unauthorized: please log in first.".to_string(), NoPolicy {}),
             context
         );
     }
@@ -452,7 +449,7 @@ pub fn get_blog_posts(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURDBPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -465,7 +462,7 @@ pub fn get_blog_posts(
         Ok(result) => result,
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -476,13 +473,13 @@ pub fn get_blog_posts(
         Some(Ok(row)) => row,
         None => {
             return ContextResponse(
-                PCon::new("❌ User not found.".to_string(), NoPolicy {}),
+                PCon::new("User not found.".to_string(), NoPolicy {}),
                 context
             );
         }
         Some(Err(e)) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -503,7 +500,7 @@ pub fn get_blog_posts(
         Ok(result) => result,
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -533,7 +530,7 @@ pub fn get_blog_posts(
 
     if interests.is_empty() {
         return ContextResponse(
-            PCon::new("❌ No interests found.".to_string(), NoPolicy {}),
+            PCon::new("No interests found.".to_string(), NoPolicy {}),
             context
         );
     }
@@ -578,7 +575,7 @@ pub fn get_blog_posts(
 
     if return_str.is_empty() {
         return ContextResponse(
-            PCon::new("❌ No blog posts found for your interests.".to_string(), NoPolicy {}),
+            PCon::new("No blog posts found for your interests.".to_string(), NoPolicy {}),
             context
         );
     }
@@ -606,7 +603,7 @@ pub fn set_email(
     
     if user_cookie.is_none() {
         return ContextResponse(
-            PCon::new("❌ Unauthorized: please log in first.".to_string(), NoPolicy {}),
+            PCon::new("Unauthorized: please log in first.".to_string(), NoPolicy {}),
             context
         );
     }
@@ -626,7 +623,7 @@ pub fn set_email(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURDBPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -639,7 +636,7 @@ pub fn set_email(
         Ok(result) => result,
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -650,13 +647,13 @@ pub fn set_email(
         Some(Ok(row)) => row,
         None => {
             return ContextResponse(
-                PCon::new("❌ User not found.".to_string(), NoPolicy {}),
+                PCon::new("User not found.".to_string(), NoPolicy {}),
                 context
             );
         }
         Some(Err(e)) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -677,7 +674,7 @@ pub fn set_email(
         Ok(_) => {},
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Failed to delete existing preference: {}", e), NoPolicy {}),
+                PCon::new(format!("Failed to delete existing preference: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -692,7 +689,7 @@ pub fn set_email(
         Ok(result) => result,
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -712,13 +709,13 @@ pub fn set_email(
     ) {
         Ok(_) => {
             ContextResponse(
-                PCon::new("✅ Email set successfully.".to_string(), NoPolicy {}),
+                PCon::new("Email set successfully.".to_string(), NoPolicy {}),
                 context
             )
         }
         Err(e) => {
             ContextResponse(
-                PCon::new(format!("❌ Failed to set email: {}", e), NoPolicy {}),
+                PCon::new(format!("Failed to set email: {}", e), NoPolicy {}),
                 context
             )
         }
@@ -733,7 +730,7 @@ pub fn send_news_mails(
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:YOURDBPASSWORD@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -746,7 +743,7 @@ pub fn send_news_mails(
         Ok(result) => result,
         Err(e) => {
             return ContextResponse(
-                PCon::new(format!("❌ Database error: {}", e), NoPolicy {}),
+                PCon::new(format!("Database error: {}", e), NoPolicy {}),
                 context
             );
         }
@@ -773,7 +770,7 @@ pub fn send_news_mails(
 
     if emails.is_empty() {
         return ContextResponse(
-            PCon::new("❌ No emails found.".to_string(), NoPolicy {}),
+            PCon::new("No emails found.".to_string(), NoPolicy {}),
             context
         );
     }
@@ -790,33 +787,6 @@ pub fn send_news_mails(
     )
 }
 
-// ----------LOGOUT----------
-// #[post("/logout")]
-// pub fn logout(
-//     cookies: PConCookieJar<'_, '_>,
-//     context: BreezeGuard,
-// ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
-//     // Check if the cookie exists
-//     if cookies.get::<NoPolicy>("user_email").is_some() {
-//         // Remove the cookie - build a cookie with the same name to remove it
-//         let remove_cookie = PConCookie::build("user_email", PCon::new("", NoPolicy {}))
-//             .path("/")
-//             .finish();
-//         cookies.remove(remove_cookie);
-//         println!("👋 User logged out successfully");
-        
-//         ContextResponse(
-//             PCon::new("✅ Logged out successfully.".to_string(), NoPolicy {}),
-//             context
-//         )
-//     } else {
-//         ContextResponse(
-//             PCon::new("⚠️ No active session found.".to_string(), NoPolicy {}),
-//             context
-//         )
-//     }
-// }
-
 #[post("/logout")]
 pub fn logout(
     cookies: PConCookieJar<'_, '_>,
@@ -824,19 +794,15 @@ pub fn logout(
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
     // Check if cookie exists
     if cookies.get::<NoPolicy>("user_email").is_some() {
-        // TODO: Cookie removal has lifetime issues with Sesame's current API
-        // For now, we acknowledge the logout request
-        // In a production system, you would need to handle this differently
-        // possibly by setting an expiration or using a different logout mechanism
-        println!("👋 User logout requested");
+        println!("User logout requested");
         
         ContextResponse(
-            PCon::new("✅ Logout requested (cookie removal pending).".to_string(), NoPolicy {}),
+            PCon::new("Logout requested (cookie removal pending).".to_string(), NoPolicy {}),
             context
         )
     } else {
         ContextResponse(
-            PCon::new("⚠️ No active session found.".to_string(), NoPolicy {}),
+            PCon::new("No active session found.".to_string(), NoPolicy {}),
             context
         )
     }
@@ -857,7 +823,7 @@ pub fn check_session(
             // Use into_verified to create the response message
             let response = email_pcon.clone().into_verified(
                 VerifiedRegion::new(|email: &str| {
-                    format!("✅ Logged in as: {}", email)
+                    format!("Logged in as: {}", email)
                 })
             );
             
@@ -871,7 +837,7 @@ pub fn check_session(
         }
         None => {
             ContextResponse(
-                PCon::new("⚠️ No active session.".to_string(), NoPolicy {}),
+                PCon::new("No active session.".to_string(), NoPolicy {}),
                 context
             )
         }
