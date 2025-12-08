@@ -11,7 +11,7 @@ pub struct MySqlBackend {
 impl MySqlBackend {
     pub fn new(user: &str, password: &str, dbname: &str) -> Result<Self, String> {
         let mut db = SesameConn::new(
-            PConOpts::from_url(&format!("mysql://{}:YOURPASSWORD@127.0.0.1/", user, password)).unwrap(),
+            PConOpts::from_url(&format!("mysql://{}:annisnotanna66!@127.0.0.1/", user, password)).unwrap(),
         ).unwrap();
 
         assert_eq!(db.ping(), true);

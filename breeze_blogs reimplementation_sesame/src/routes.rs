@@ -1,15 +1,14 @@
 use rocket::serde::Deserialize;
 use bcrypt::{hash, DEFAULT_COST};
-use bcrypt::verify; // needed
+use bcrypt::verify; 
 use sesame::policy::Reason;
 use sesame::verified::{VerifiedRegion, execute_verified};
 use sesame::{pcon::PCon, policy::NoPolicy};
-use sesame_mysql::PConParam; // get? 
+use sesame_mysql::{PConParam, SesameConn, PConOpts};
 use sesame_rocket::rocket::{post, get, PConCookieJar, RequestPConJson, PConJson, PConCookie, ContextResponse};
 use crate::policy::{BreezeGuard, BreezeContextData};
-use sesame_mysql::SesameConn;
-use sesame_mysql::PConOpts;
-// use sesame_rocket::get;
+// use sesame_mysql::SesameConn;
+// use sesame_mysql::PConOpts;
 
 
 // ----------------REGISTER----------------
@@ -26,14 +25,12 @@ pub fn register(
     context: BreezeGuard,
     user: PConJson<RegisterRequest>
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
+
     // Create DB connection
 let mut db = SesameConn::new(
-    PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
+    PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
 ).unwrap();
 db.query_drop("USE breeze_blogs").unwrap();
-
-
-// TO DO: we need to change this into VerifiedRegion and change to PConString for hashpassword 
 
     // let hashed_password = user.password.clone(); //hash(&user.password, DEFAULT_COST).unwrap();
     let hashed_password: PCon<String, NoPolicy> = user.password.clone().into_verified(VerifiedRegion::new(|password: String| {
@@ -41,7 +38,7 @@ db.query_drop("USE breeze_blogs").unwrap();
     }));
     let email_pcon = user.email.clone();
 
-// exec_drop takes (query, params)
+    // exec_drop takes (query, params)
     let result = db.exec_drop(
         "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
         (user.username.clone(), email_pcon, hashed_password),
@@ -61,7 +58,6 @@ db.query_drop("USE breeze_blogs").unwrap();
                 format!("✅ User '{}' registered successfully!", username)
             }));
 
-            //format!("✅ User '{}' registered successfully!", user.username)
             ContextResponse(output, context)
         }
         Err(e) => {
@@ -79,19 +75,21 @@ pub struct LoginRequest {
     pub email: PCon<String, NoPolicy>,
     pub password: PCon<String, NoPolicy>,
 }
+
 #[post("/login", data = "<user>")]
 pub fn login(
     cookies: PConCookieJar<'_, '_>,
     context: BreezeGuard,
     user: PConJson<LoginRequest>
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
+    
     // Create DB connection
 let mut db = SesameConn::new(
-    PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
+    PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
 ).unwrap();
 db.query_drop("USE breeze_blogs").unwrap();
 
-// Query database for user by email
+    // Query database for user by email
     let mut query_result = match db.exec_iter(
         "SELECT email, password FROM users WHERE email = ?",
         (user.email.clone(),),
@@ -106,7 +104,7 @@ db.query_drop("USE breeze_blogs").unwrap();
         }
     };
 
-// Get first row
+    // Get first row
     let first_row = match query_result.next() {
         Some(Ok(row)) => row,
         None => {
@@ -123,25 +121,25 @@ db.query_drop("USE breeze_blogs").unwrap();
         }
     };
 
-// Extract stored password hash from row (THIS LINE WAS MISSING!)
+    // Extract stored password hash from row (THIS LINE WAS MISSING!)
     let stored_hash = first_row.get("password").unwrap();
 
-// Use into_verified to extract password string
+    // Use into_verified to extract password string
     let password_str_pcon = user.password.clone().into_verified(
         VerifiedRegion::new(|pwd: String| pwd)
     );
 
-// Extract it as plain string (NoPolicy allows this)
+    // Extract it as plain string (NoPolicy allows this)
     let input_password_str = password_str_pcon.as_ref().discard_box().clone();
 
-// Now verify password against stored hash
+    // Now verify password against stored hash
     let is_valid = stored_hash.into_verified(
         VerifiedRegion::new(move |stored_pwd: String| {
             verify(&input_password_str, &stored_pwd).unwrap_or(false)
         })
     );
 
-// Create success/failure message
+    // Create success/failure message
     let response = user.email.clone().into_verified(
         VerifiedRegion::new(|email: String| {
             format!("✅ Login successful for '{}'", email)
@@ -195,7 +193,7 @@ pub fn set_interests(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -334,7 +332,7 @@ pub fn get_interests(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -454,7 +452,7 @@ pub fn get_blog_posts(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -628,7 +626,7 @@ pub fn set_email(
 
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
@@ -735,7 +733,7 @@ pub fn send_news_mails(
 ) -> ContextResponse<String, NoPolicy, BreezeContextData> {
     // Create DB connection
     let mut db = SesameConn::new(
-        PConOpts::from_url("mysql://root:YOURPASSWORD@127.0.0.1/").unwrap(),
+        PConOpts::from_url("mysql://root:annisnotanna66!@127.0.0.1/").unwrap(),
     ).unwrap();
     db.query_drop("USE breeze_blogs").unwrap();
 
