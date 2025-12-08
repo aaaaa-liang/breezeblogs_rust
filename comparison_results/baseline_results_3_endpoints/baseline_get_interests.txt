@@ -1,0 +1,15 @@
+Running 4m test @ http://localhost:8000/interests
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     7.10ms    5.36ms  41.19ms   49.62%
+    Req/Sec   139.79    234.50     2.04k    98.19%
+  Latency Distribution
+     50%    4.60ms
+     75%   13.44ms
+     90%   13.96ms
+     99%   15.78ms
+  17816 requests in 4.33m, 5.83MB read
+  Socket errors: connect 0, read 0, write 0, timeout 17
+  Non-2xx or 3xx responses: 3959
+Requests/sec:     68.52
+Transfer/sec:     22.96KB
