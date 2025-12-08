@@ -1,6 +1,6 @@
-## Baseline BreezeBlogs  
+## Baseline BreezeBlogs in Rust
 
-In `routes.rs`, the following endpoints included: 
+In `routes.rs`, the following endpoints are included: 
 - register
 - login 
 - set_interests 
