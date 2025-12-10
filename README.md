@@ -1,11 +1,4 @@
-## GDPR-Enforcement Framework Evaluation: Sesame
-
-A research implementation evaluating GDPR enforcement using the Sesame privacy framework, built as part of DS593 (Privacy in Data Systems).
-
-- `breeze_blogs reimplementation` folder: The baseline BreezeBlogs application in Rust. 
-- `breeze_blogs reimplementation_sesame` folder: The BreezeBlogs application with Sesame implementation. 
-- `compare_results` folder: Runtime performance results generated from benchmark.sh and benchmark_3_endpoints.sh in respective folders above. 
-# GDPR-Enforcement Framework Evaluation: **Sesame**
+ # GDPR-Enforcement Framework Evaluation: **Sesame**
 
 This repository contains a Rust reimplementation of the BreezeBlogs demo application along with a second version enhanced with the Sesame privacy framework. The project evaluates Sesame's GDPR-related technical guarantees and its runtime performance.
 
@@ -45,15 +38,6 @@ Sesame provides:
 
 Both versions of BreezeBlogs maintain identical database schemas for direct comparison.
 
-## Key Runtime Results
-
-Framework | Runtime Overhead
---------- | ----------------
-Fontus | +14%
-RuleKeeper | –11%
-GDPR-MFOTL | +477%
-Sesame (this project) | –34% (faster than baseline)
-
 ## Folder Descriptions
 
 ### breeze_blogs reimplementation/
@@ -89,9 +73,9 @@ Same application, but with Sesame integrated. Includes:
 - POST /interests
 - GET /interests
 - GET /blogposts/:interest
-- set_email
-- send_new_mail
-- logout
-- GET/check_session
+- POST /email
+- GET /send_new_mail
+- POST /logout
+- GET /session
 
 The Sesame version enforces compile-time privacy constraints on all these endpoints.
