@@ -89,5 +89,9 @@ Same application, but with Sesame integrated. Includes:
 - POST /interests
 - GET /interests
 - GET /blogposts/:interest
+- set_email
+- send_new_mail
+- logout
+- GET/check_session
 
 The Sesame version enforces compile-time privacy constraints on all these endpoints.
