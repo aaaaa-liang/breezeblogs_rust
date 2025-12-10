@@ -5,101 +5,94 @@ A research implementation evaluating GDPR enforcement using the Sesame privacy f
 - `breeze_blogs reimplementation` folder: The baseline BreezeBlogs application in Rust. 
 - `breeze_blogs reimplementation_sesame` folder: The BreezeBlogs application with Sesame implementation. 
 - `compare_results` folder: Runtime performance results generated from benchmark.sh and benchmark_3_endpoints.sh in respective folders above. 
+# GDPR-Enforcement Framework Evaluation: **Sesame**
 
-This repository contains two Rust applications:
+A research implementation evaluating GDPR enforcement using the **Sesame** privacy framework, built as part of DS593 (Privacy in Data Systems).
+
+---
+# GDPR-Enforcement Framework Evaluation: Sesame
+
+This repository contains a Rust reimplementation of the BreezeBlogs demo application along with a second version enhanced with the Sesame privacy framework. The project evaluates Sesame's GDPR-related technical guarantees and its runtime performance.
+
+## Repository Structure
+
 breezeblogs_rust/
-│
-├── breeze_blogs reimplementation/         
-│   └── src/
-│       ├── db.rs
-│       ├── main.rs
-│       ├── routes.rs
-│       ├── schema.sql
-│       └── readme.md
-│
-└── breeze_blogs reimplementation_sesame/   
-    └── src/
-        ├── db.rs
-        ├── main.rs
-        ├── policy.rs
-        ├── routes.rs
-        ├── schema.sql
-        └── readme.md
-        
-Project Overview
-This project reimplements the BreezeBlogs demo web application in Rust and integrates the Sesame privacy framework to measure:
- GDPR Technical Compliance
-(using the Kalinowski et al. POPETS 2025 checklist)
- Runtime Overhead
-(based on three core endpoints: blog-posts, send-news-mails, and interests)
- Policy Container (PCon) Behavior
-Ensures data is wrapped with compile-time–verified policies.
- Privacy Region Enforcement
-Restricts when/where sensitive data can be used inside the program.
+- breeze_blogs reimplementation/
+  - src/
+    - db.rs
+    - main.rs
+    - routes.rs
+    - schema.sql
+    - readme.md
+- breeze_blogs reimplementation_sesame/
+  - src/
+    - db.rs
+    - main.rs
+    - policy.rs
+    - routes.rs
+    - schema.sql
+    - readme.md
+- compare_results/
+  - benchmark outputs for baseline and Sesame versions
 
-Key Findings (Summary)
-Framework	Runtime Overhead
-Fontus	+14%
-RuleKeeper	–11%
-GDPR-MFOTL	+477%
-Sesame (This Work)	–34% (faster than baseline)
+## Project Overview
 
-📁 Folder Purpose
-1. breeze_blogs reimplementation/
-The baseline Rust BreezeBlogs application.
-Contains:
-Core Rocket server
-MySQL integration
-Endpoints (register, login, set/get interests)
-No privacy enforcement layer
+The goal of this project is to evaluate Sesame using:
+- A GDPR technical compliance checklist (Kalinowski et al., POPETS 2025)
+- Runtime overhead measurements on three endpoints:
+  - blog-posts
+  - send-news-mails
+  - interests
 
-2. breeze_blogs reimplementation_sesame/
-The same BreezeBlogs app, now modified to use Sesame:
-policy.rs – Sesame Policy Container definitions
-PCon-wrapped request structs
-Privacy Region enforcement
-Refactored handlers to operate on PCon values
-Same schema as baseline for apples-to-apples comparison
+Sesame provides:
+- **Policy Containers (PCon):** attach policies to data with compile-time verification
+- **Privacy Regions:** restrict code that handles sensitive data based on regional constraints
 
-Dependencies (What to Install)
+Both versions of BreezeBlogs maintain identical database schemas for direct comparison.
 
-Rust
+## Key Runtime Results
 
-rocket = "0.5"
+Framework | Runtime Overhead
+--------- | ----------------
+Fontus | +14%
+RuleKeeper | –11%
+GDPR-MFOTL | +477%
+Sesame (this project) | –34% (faster than baseline)
 
-mysql = "24"
+## Folder Descriptions
 
-serde + serde_json
+### breeze_blogs reimplementation/
+Baseline BreezeBlogs application without any privacy enforcement. Includes:
+- User registration and login
+- Setting and retrieving interests
+- Blogposts retrieval
+- Standard Rocket + MySQL stack
 
-dotenvy (if using .env)\
+### breeze_blogs reimplementation_sesame/
+Same application, but with Sesame integrated. Includes:
+- `policy.rs` defining PCon policies
+- Request structs wrapped in PCon types
+- Region-based enforcement via Sesame
+- Refactored handlers operating on policy-bound values
 
-Sesame Framework
+## Dependencies (What to Install)
 
-From the Sesame repository:
-sesame
+- Rust toolchain
+- MySQL 8.x
+- Rocket
+- mysql crate
+- serde, serde_json
+- dotenvy
+- Sesame (`sesame` and `sesame_derive`)
+- either (Sesame dependency)
+- wrk (used for benchmarking)
 
-sesame_derive
+## Endpoints (Both Versions)
 
-either (used internally by Sesame)
+- POST /register
+- POST /login
+- POST /interests
+- GET /interests
+- GET /blogposts/:interest
 
-Database
-MySQL 8.x
-
-Load schema.sql from each folder when testing independently.
-
-Benchmarking Tools: (used in the evaluation)
-
-wrk (or Locust if replicating original study)
-
-Endpoints (Both Versions)
-POST /register
-
-POST /login
-
-POST /interests (set interests)
-
-GET /interests (get interests)
-
-GET /blogposts/:interest
-
-The Sesame version enforces privacy constraints automatically at compile time.
+The Sesame version enforces compile-time privacy constraints on all these endpoints.
