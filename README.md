@@ -33,10 +33,7 @@ breezeblogs_rust/
 
 The goal of this project is to evaluate Sesame using:
 - A GDPR technical compliance checklist (Kalinowski et al., POPETS 2025)
-- Runtime overhead measurements on three endpoints:
-  - blog-posts
-  - send-news-mails
-  - interests
+- Runtime overhead measurements on all endpoints 
 
 Sesame provides:
 - **Policy Containers (PCon):** attach policies to data with compile-time verification
