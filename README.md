@@ -64,29 +64,42 @@ Same schema as baseline for apples-to-apples comparison
 Dependencies (What to Install)
 
 Rust
+
 rocket = "0.5"
+
 mysql = "24"
+
 serde + serde_json
-dotenvy (if using .env)
+
+dotenvy (if using .env)\
+
 Sesame Framework
+
 From the Sesame repository:
 sesame
+
 sesame_derive
+
 either (used internally by Sesame)
+
 Database
 MySQL 8.x
+
 Load schema.sql from each folder when testing independently.
-Benchmarking Tools
-(used in the evaluation)
+
+Benchmarking Tools: (used in the evaluation)
+
 wrk (or Locust if replicating original study)
+
 Endpoints (Both Versions)
 POST /register
+
 POST /login
+
 POST /interests (set interests)
+
 GET /interests (get interests)
+
 GET /blogposts/:interest
 
 The Sesame version enforces privacy constraints automatically at compile time.
-Comparative performance analysis
-Checklist-based GDPR support classification
-If you want, I can generate a "Research Highlights" section or a citation block for your GitHub too.
