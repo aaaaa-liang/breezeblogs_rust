@@ -11,7 +11,10 @@ breezeblogs_rust/
     - main.rs
     - routes.rs
     - schema.sql
-    - readme.md
+  - Cargo.lock
+  - Cargo.toml
+  - benchmark.sh
+  - benchmark_3_endpoints.sh
 - breeze_blogs reimplementation_sesame/
   - src/
     - db.rs
@@ -19,7 +22,10 @@ breezeblogs_rust/
     - policy.rs
     - routes.rs
     - schema.sql
-    - readme.md
+  - Cargo.lock
+  - Cargo.toml
+  - benchmark.sh
+  - benchmark_3_endpoints.sh
 - compare_results/
   - benchmark outputs for baseline and Sesame versions
 
@@ -37,6 +43,8 @@ Sesame provides:
 - **Privacy Regions:** restrict code that handles sensitive data based on regional constraints
 
 Both versions of BreezeBlogs maintain identical database schemas for direct comparison.
+
+**To run the implementation, please refer to How to Set Up BreezeBlogs_Readme.md.** 
 
 ## Folder Descriptions
 
