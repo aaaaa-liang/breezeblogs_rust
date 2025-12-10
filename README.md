@@ -73,13 +73,13 @@ Same application, but with Sesame integrated. Includes:
 ## Dependencies (What to Install)
 
 - Rust toolchain
+- channel = "nightly-2024-01-06"
 - MySQL 8.x
 - Rocket
 - mysql crate
 - serde, serde_json
 - dotenvy
 - Sesame (`sesame` and `sesame_derive`)
-- either (Sesame dependency)
 - wrk (used for benchmarking)
 
 ## Endpoints (Both Versions)
