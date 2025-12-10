@@ -1,0 +1,15 @@
+Running 30s test @ http://localhost:8000/email
+  4 threads and 20 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     9.30ms    8.83ms  78.19ms   83.45%
+    Req/Sec   377.66    343.74     1.21k    62.84%
+  Latency Distribution
+     50%    5.44ms
+     75%    8.28ms
+     90%   23.60ms
+     99%   36.20ms
+  8499 requests in 30.07s, 4.77MB read
+  Socket errors: connect 0, read 0, write 0, timeout 60
+  Non-2xx or 3xx responses: 6488
+Requests/sec:    282.68
+Transfer/sec:    162.52KB
