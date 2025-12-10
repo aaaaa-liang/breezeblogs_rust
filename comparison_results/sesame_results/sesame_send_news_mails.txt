@@ -1,0 +1,15 @@
+Running 30s test @ http://localhost:8000/send-news-mails
+  12 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    32.18ms  108.52ms   2.00s    99.63%
+    Req/Sec    63.22     59.92   270.00     70.43%
+  Latency Distribution
+     50%   25.45ms
+     75%   32.16ms
+     90%   37.20ms
+     99%   55.21ms
+  2009 requests in 30.10s, 0.93MB read
+  Socket errors: connect 72, read 0, write 0, timeout 92
+  Non-2xx or 3xx responses: 26
+Requests/sec:     66.74
+Transfer/sec:     31.72KB
