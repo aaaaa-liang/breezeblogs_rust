@@ -79,7 +79,7 @@ Same application, but with Sesame integrated. Includes:
 - GET /interests
 - GET /blogposts/:interest
 - POST /email
-- GET /send_new_mail
+- GET /send_new_mails
 - POST /logout
 - GET /session
 
