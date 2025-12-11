@@ -171,7 +171,7 @@ No JSON required.
 ```
 
 ### **POST /send-news-mails**
-**URL:** `http://127.0.0.1:8000/send-news-mails`
+**URL:** `http://127.0.0.1:8000/send-new-mails`
 No JSON required.
 
 ### **GET /session**
